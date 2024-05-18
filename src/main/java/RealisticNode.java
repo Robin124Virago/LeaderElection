@@ -59,7 +59,7 @@ public class RealisticNode implements Runnable {
 
                 // If no OK message received within a certain time, declare self as coordinator
                 try {
-                    TimeUnit.SECONDS.sleep(1); // Wait for 1 second
+                    TimeUnit.SECONDS.sleep(2); // Wait for 2 seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
