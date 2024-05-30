@@ -10,7 +10,7 @@ public class RealisticNode implements Runnable {
     private boolean isActive;
     private boolean receivedOk;
     private List<RealisticNode> allNodes;
-    private static volatile boolean coordinatorElected = false; // Shared flag
+    private static volatile boolean coordinatorElected = false; // Shared flag not allowed
     private ExecutorService executorService;
     private Random random;
 
@@ -50,6 +50,12 @@ public class RealisticNode implements Runnable {
                 System.out.println("Node " + id + " initiates election.");
                 receivedOk = false;
 
+                try {
+                    TimeUnit.MILLISECONDS.sleep(500); // delay for slowing down the process
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 // Send election message to higher nodes asynchronously
                 for (RealisticNode node : allNodes) {
                     if (node.getId() > id && node.isActive()) {
@@ -59,16 +65,18 @@ public class RealisticNode implements Runnable {
 
                 // If no OK message received within a certain time, declare self as coordinator
                 try {
-                    TimeUnit.SECONDS.sleep(2); // Wait for 2 seconds
+                    TimeUnit.SECONDS.sleep(1); // Wait for 1 second
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
-                if (!receivedOk && !coordinatorElected) {
-                    System.out.println("Node " + id + " becomes coordinator.");
-                    isCoordinator = true;
-                    coordinatorElected = true; // Set the flag
-                    announceCoordinator();
+                synchronized (RealisticNode.class) {
+                    if (!receivedOk && !coordinatorElected) {
+                        System.out.println("Node " + id + " becomes coordinator.");
+                        isCoordinator = true;
+                        coordinatorElected = true; // Set the flag
+                        announceCoordinator();
+                    }
                 }
             });
         }
@@ -77,6 +85,13 @@ public class RealisticNode implements Runnable {
     public void receiveElection(int initiatingNodeId) {
         if (isActive && !coordinatorElected) {
             System.out.println("Node " + id + " receives election from Node " + initiatingNodeId);
+
+            // Add delay
+            try {
+                TimeUnit.MILLISECONDS.sleep(500); // delay for slowing down the process
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             // Send OK message to initiating node asynchronously
             executorService.execute(() -> sendOkMessage(initiatingNodeId));
@@ -122,12 +137,19 @@ public class RealisticNode implements Runnable {
     public void announceCoordinator() {
         if (isCoordinator) {
             System.out.println("Node " + id + " announces itself as coordinator.");
+
+            // Add delay
+            try {
+                TimeUnit.MILLISECONDS.sleep(500); // delay for slowing down the process
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             for (RealisticNode node : allNodes) {
                 if (node.getId() != id) {
                     node.setCoordinator(false);
                 }
             }
-            coordinatorElected = true; // Set the flag to prevent further announcements
         }
     }
 

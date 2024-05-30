@@ -10,7 +10,7 @@ public class Main {
         List<Node> allNodes = new ArrayList<>();
         List<RealisticNode> allRealisticNodes = new ArrayList<>();
 
-        // Create nodes and add them to the shared list
+//         Create nodes and add them to the shared list
         Node node1 = new Node(1, allNodes);
         Node node2 = new Node(2, allNodes);
         Node node3 = new Node(3, allNodes);
@@ -34,7 +34,7 @@ public class Main {
         // Simulate this higher node as inactive
         node4.setActive(false);
 
-        // Use an ExecutorService to run nodes in parallel
+        // ExecutorService to run nodes in parallel
         ExecutorService executorService = Executors.newCachedThreadPool();
         executorService.execute(node1);
         executorService.execute(node2);

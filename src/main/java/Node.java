@@ -9,7 +9,7 @@ public class Node implements Runnable {
     private boolean isActive;
     private boolean receivedOk;
     private List<Node> allNodes;
-    private static volatile boolean coordinatorElected = false; // Shared flag
+    private static volatile boolean coordinatorElected = false; // Shared flag not allowed
     private ExecutorService executorService;
 
     public Node(int id, List<Node> allNodes) {
