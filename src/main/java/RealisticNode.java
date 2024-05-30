@@ -150,6 +150,7 @@ public class RealisticNode implements Runnable {
                     node.setCoordinator(false);
                 }
             }
+            System.exit(0);
         }
     }
 

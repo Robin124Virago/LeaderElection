@@ -1,3 +1,4 @@
+// Main.java
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -6,39 +7,61 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) {
+
         // Create a shared list of nodes
         List<Node> allNodes = new ArrayList<>();
         List<RealisticNode> allRealisticNodes = new ArrayList<>();
 
-//         Create nodes and add them to the shared list
-        Node node1 = new Node(1, allNodes);
-        Node node2 = new Node(2, allNodes);
-        Node node3 = new Node(3, allNodes);
-        Node node4 = new Node(4, allNodes);
-
-        allNodes.add(node1);
-        allNodes.add(node2);
-        allNodes.add(node3);
-        allNodes.add(node4);
-
-//        RealisticNode node1 = new RealisticNode(1, allRealisticNodes);
-//        RealisticNode node2 = new RealisticNode(2, allRealisticNodes);
-//        RealisticNode node3 = new RealisticNode(3, allRealisticNodes);
-//        RealisticNode node4 = new RealisticNode(4, allRealisticNodes);
-//
-//        allRealisticNodes.add(node1);
-//        allRealisticNodes.add(node2);
-//        allRealisticNodes.add(node3);
-//        allRealisticNodes.add(node4);
-
-        // Simulate this higher node as inactive
-        node4.setActive(false);
-
         // ExecutorService to run nodes in parallel
         ExecutorService executorService = Executors.newCachedThreadPool();
-        executorService.execute(node1);
-        executorService.execute(node2);
-        executorService.execute(node3);
+
+        int numberOfNodes = 10; // Change this to the number of nodes you want to create
+
+        boolean RealisticNodes = false; // Set this to false to use Node instead of RealisticNode
+
+        if (RealisticNodes) {
+            for (int i = 1; i <= numberOfNodes; i++) {
+                RealisticNode node = new RealisticNode(i, allRealisticNodes);
+                allRealisticNodes.add(node);
+            }
+
+            // Set node4 as inactive
+            RealisticNode node4 = allRealisticNodes.stream()
+                    .filter(node -> node.getId() == 4)
+                    .findFirst()
+                    .orElse(null);
+
+            if (node4 != null) {
+                node4.setActive(false);
+            }
+
+            for (RealisticNode node : allRealisticNodes) {
+                if (node.isActive()) {
+                    executorService.execute(node);
+                }
+            }
+        } else {
+            for (int i = 1; i <= numberOfNodes; i++) {
+                Node node = new Node(i, allNodes);
+                allNodes.add(node);
+            }
+
+            // Set node4 as inactive
+            Node node4 = allNodes.stream()
+                    .filter(node -> node.getId() == 4)
+                    .findFirst()
+                    .orElse(null);
+
+            if (node4 != null) {
+                node4.setActive(false);
+            }
+
+            for (Node node : allNodes) {
+                if (node.isActive()) {
+                    executorService.execute(node);
+                }
+            }
+        }
 
         // Wait for the election process to complete
         try {

@@ -111,6 +111,7 @@ public class Node implements Runnable {
                 }
             }
             coordinatorElected = true; // Set the flag to prevent further announcements
+            System.exit(0);
         }
     }
 
